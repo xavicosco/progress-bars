@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+	<head>
+		<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+		<link rel="stylesheet" type="text/css" href="XC_styles_min.css">
+		<meta charset='utf-8'>
+		<title>Green Light & Optus </title>
+	</head>
+	<body>
+		<div id='container'>
+			<div id='content'>
+			</div>
+		</div>
+		
+	  <script id='template' type='text/ractive'>
+		<p>Hello, {{name}}!</p>
+	  </script>	  
+	  <script id='progress_bar' type='text/ractive'>
+		<h1>Progress Bars Demo</h1>		
+		{{#info_bars}}
+		<div class="progress">
+			{{#if value > 0 && value <= 100 }}
+				<div id="{{id}}" value="{{bar}}" class="animated_bar" style='width:{{ value }}%;'></div>
+				<p value="{{ value }}">{{ value }}%</p>
+			{{/if}}
+			{{#if value <= 0 }}
+				<div id="{{id}}" value="{{bar}}" class="animated_bar min_bar"></div>
+				<p value="0">0%</p>
+			{{/if }}
+			{{#if value > 100 }}
+				<div id="{{id}}" value="{{bar}}" class="animated_bar max_bar"></div>
+				<p value="{{ value }}" class="strong">{{ value }}%</p>
+			{{/if }}
+		</div>
+		{{/info_bars}}
+		
+		<div class="footer_btns">
+			<select id="dropdown_bars" value="{{dropdown_bars}}">
+				{{#select_bars}}
+					<option value='{{this}}'>{{name}}</option>
+				{{/select_bars}}
+			</select>
+			
+			<button type="button" on-click="modify_value:'0','25'">- 25</button>
+			<button type="button" on-click="modify_value:'0','10'">- 10</button>
+			<button type="button" on-click="modify_value:'1','10'">+ 10</button>
+			<button type="button" on-click="modify_value:'1','25'">+ 25</button>
+		</div>			
+	  </script>
+	  <script>
+			var ractive = new Ractive({
+			  el: '#content',
+			  template: '#progress_bar',
+			  data: 
+			  { 
+				select_bars: [
+					{ id: 1, name: '#progress1' },
+					{ id: 2, name: '#progress2' },
+					{ id: 3, name: '#progress3' }],
+				info_bars: [
+					{ id: "bar1_status", value: '25' },
+					{ id: "bar2_status", value: '50' },
+					{ id: "bar3_status", value: '75' }]
+				//buttons_decrease_increase:
+			  }
+			});			
+			ractive.on('modify_value', function (event, boolean_increase, val) {
+				var current_bar = dropdown_bars._ractive.value.id - 1; 
+				var current_value = ractive.get("info_bars."+current_bar+".value");
+				//boolean_increase: 0 means decrease whereas 1 means increase
+				if (boolean_increase == 0)
+				{
+					if (current_value > 0)	
+						ractive.set("info_bars."+current_bar+".value",parseInt(current_value)-parseInt(val));
+					else
+						current_value = 0;					
+				}
+				else
+					ractive.set("info_bars."+current_bar+".value",parseInt(current_value)+parseInt(val));
+			});			
+		  </script>
+	</body>
+</html>
